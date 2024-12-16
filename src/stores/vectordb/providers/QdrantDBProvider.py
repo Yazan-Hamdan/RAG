@@ -26,7 +26,7 @@ class QdrantDBProvider(VectorDBInterface):
     def disconnect(self):
         self.client = None
 
-    def is_collection_existed(self, collection_name: str) -> bool:
+    def does_collection_exist(self, collection_name: str) -> bool:
         return self.client.collection_exists(collection_name=collection_name)
     
     def list_all_collections(self) -> List:
@@ -36,7 +36,7 @@ class QdrantDBProvider(VectorDBInterface):
         return self.client.get_collection(collection_name=collection_name)
     
     def delete_collection(self, collection_name: str):
-        if self.is_collection_existed(collection_name):
+        if self.does_collection_exist(collection_name):
             return self.client.delete_collection(collection_name=collection_name)
         
     def create_collection(self, collection_name: str, 
@@ -45,7 +45,7 @@ class QdrantDBProvider(VectorDBInterface):
         if do_reset:
             _ = self.delete_collection(collection_name=collection_name)
         
-        if not self.is_collection_existed(collection_name):
+        if not self.does_collection_exist(collection_name):
             _ = self.client.create_collection(
                 collection_name=collection_name,
                 vectors_config=models.VectorParams(
@@ -62,7 +62,7 @@ class QdrantDBProvider(VectorDBInterface):
                          metadata: dict = None, 
                          record_id: str = None):
         
-        if not self.is_collection_existed(collection_name):
+        if not self.does_collection_exist(collection_name):
             self.logger.error(f"Can not insert new record to non-existed collection: {collection_name}")
             return False
         
